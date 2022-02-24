@@ -17,7 +17,7 @@ const zero = document.getElementById('0');
 const plus = document.getElementById('+');
 const minus = document.getElementById('-');
 const times = document.getElementById('*');
-const divide = document.getElementById('÷');
+const divide = document.getElementById('/');
 const equals = document.getElementById('=');
 const decimal  = document.getElementById('.');
 
@@ -27,9 +27,18 @@ let currentNumber = "";
 let previousNumber = "";
 let currentOperator = "";
 
-// clicking number functionality
-for (let i=0; i<numbers.length; i++) { 
-    numbers[i].addEventListener('click', ()=>{
+// number functionality
+
+for (let i=0; i<numbers.length; i++) {
+    document.addEventListener('keydown', (e)=>{ //keyboard functionality
+        if(currentNumber.length < 11){
+            if (e.code == `Digit${numbers[i].id}`){
+                currentNumber += numbers[i].id
+                botValue.textContent = currentNumber
+            }       
+        }
+    }) 
+    numbers[i].addEventListener('click', ()=>{ //click functionality
         if(currentNumber.length < 11){ //limits the number of digits to 11
             currentNumber += numbers[i].id
             botValue.textContent = currentNumber
@@ -39,6 +48,28 @@ for (let i=0; i<numbers.length; i++) {
 
 // clicking operators functionality
 for (let i=0; i<operators.length; i++) {
+    document.addEventListener('keydown', (e)=>{ //keyboard functionality
+        if (e.key == `${operators[i].id}`){
+            if (currentNumber !== "" && previousNumber !== ""){ //checks if there are 2 operands to evaluate
+                operate() 
+                if (botValue.textContent !== 'ERROR') { //checks if value was not divided by 0 and change values appriopriately
+                    botValue.textContent = previousNumber
+                    topValue.textContent = "";
+                    currentNumber = ""
+                }
+                currentOperator = operators[i].id;
+                topValue.textContent = previousNumber + " " + operators[i].id; 
+            } else if (currentNumber !== ""){ //checks if there is no operand yet, only assign values if none
+                currentOperator = operators[i].id
+                previousNumber = currentNumber
+                topValue.textContent=previousNumber + " " + operators[i].id;
+                currentNumber = "";
+            } else {
+                currentOperator = operators[i].id
+                topValue.textContent=previousNumber + " " + operators[i].id;
+            } 
+        }
+    })
     operators[i].addEventListener('click',() => {
         if (currentNumber !== "" && previousNumber !== ""){ //checks if there are 2 operands to evaluate
             operate() 
@@ -61,6 +92,20 @@ for (let i=0; i<operators.length; i++) {
     });
 }
 
+document.addEventListener('keydown', (e)=>{  //keyboard functionality
+    if(e.key == `${equals.id}`) {
+        if (currentNumber !== "" && previousNumber !== ""){
+            operate()
+            if (botValue.textContent !== 'ERROR') {
+                currentNumber = previousNumber
+                botValue.textContent = currentNumber
+                topValue.textContent = ""
+                previousNumber = ""
+            }  
+        }
+    }    
+})
+
 equals.addEventListener('click', ()=>{ 
     if (currentNumber !== "" && previousNumber !== ""){
         operate()
@@ -74,8 +119,26 @@ equals.addEventListener('click', ()=>{
 })
 
 decimal.addEventListener('click', addDecimal);
+document.addEventListener('keydown', (e)=>{ //keyboard functionality
+    if(e.key == `${decimal.id}`) {
+        addDecimal()
+    } 
+});
+
 clearBtn.addEventListener('click', clear);
+document.addEventListener('keydown', (e)=>{ //keyboard
+    if(e.key == 'Delete'){
+        clear()
+    }
+});
+
+
 deleteBtn.addEventListener('click', deletePrevious)
+document.addEventListener('keydown',(e)=>{ //keyboard
+    if(e.key == 'Backspace'){
+        deletePrevious()
+    }
+})
 
 function operate(){
     previousNumber = Number(previousNumber);
@@ -90,7 +153,7 @@ function operate(){
         case "*":
             previousNumber *= currentNumber
             break;
-        case "÷":
+        case "/":
             if (currentNumber === 0){
                 currentNumber = "";
                 return botValue.textContent ="ERROR"
