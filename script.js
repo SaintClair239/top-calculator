@@ -27,11 +27,41 @@ let currentNumber = "";
 let previousNumber = "";
 let currentOperator = "";
 
-decimal.addEventListener('click', addDecimal);
-clearBtn.addEventListener('click', clear);
-deleteBtn.addEventListener('click', deletePrevious)
+// clicking number functionality
+for (let i=0; i<numbers.length; i++) { 
+    numbers[i].addEventListener('click', ()=>{
+        if(currentNumber.length < 11){ //limits the number of digits to 11
+            currentNumber += numbers[i].id
+            botValue.textContent = currentNumber
+        }
+    })
+}
 
-equals.addEventListener('click', ()=>{
+// clicking operators functionality
+for (let i=0; i<operators.length; i++) {
+    operators[i].addEventListener('click',() => {
+        if (currentNumber !== "" && previousNumber !== ""){ //checks if there are 2 operands to evaluate
+            operate() 
+            if (botValue.textContent !== 'ERROR') { //checks if value was not divided by 0 and change values appriopriately
+                botValue.textContent = previousNumber
+                topValue.textContent = "";
+                currentNumber = ""
+            }
+            currentOperator = operators[i].id;
+            topValue.textContent = previousNumber + " " + operators[i].id; 
+        } else if (currentNumber !== ""){ //checks if there is no operand yet, only assign values if none
+            currentOperator = operators[i].id
+            previousNumber = currentNumber
+            topValue.textContent=previousNumber + " " + operators[i].id;
+            currentNumber = "";
+        } else {
+            currentOperator = operators[i].id
+            topValue.textContent=previousNumber + " " + operators[i].id;
+        }
+    });
+}
+
+equals.addEventListener('click', ()=>{ 
     if (currentNumber !== "" && previousNumber !== ""){
         operate()
         if (botValue.textContent !== 'ERROR') {
@@ -43,37 +73,9 @@ equals.addEventListener('click', ()=>{
     }  
 })
 
-for (let i=0; i<numbers.length; i++) {
-    numbers[i].addEventListener('click', ()=>{
-        if(currentNumber.length < 11){
-            currentNumber += numbers[i].id
-            botValue.textContent = currentNumber
-        }
-    })
-}
-    
-for (let i=0; i<operators.length; i++) {
-    operators[i].addEventListener('click',() => {
-        if (currentNumber !== "" && previousNumber !== ""){
-            operate()
-            if (botValue.textContent !== 'ERROR') {
-                botValue.textContent = previousNumber
-                topValue.textContent = "";
-                currentNumber = ""
-            }
-            currentOperator = operators[i].id;
-            topValue.textContent = previousNumber + " " + operators[i].id;
-        } else if (currentNumber !== ""){
-            currentOperator = operators[i].id
-            previousNumber = currentNumber
-            topValue.textContent=previousNumber + " " + operators[i].id;
-            currentNumber = "";
-        } else {
-            currentOperator = operators[i].id
-            topValue.textContent=previousNumber + " " + operators[i].id;
-        }
-    });
-}
+decimal.addEventListener('click', addDecimal);
+clearBtn.addEventListener('click', clear);
+deleteBtn.addEventListener('click', deletePrevious)
 
 function operate(){
     previousNumber = Number(previousNumber);
