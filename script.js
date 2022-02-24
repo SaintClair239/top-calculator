@@ -53,7 +53,8 @@ equals.addEventListener('click', ()=>{
                 previousNumber /= currentNumber
                 break;
         }
-        previousNumber = Number(previousNumber).toFixed(3)
+        previousNumber = previousNumber.toFixed(3)
+        previousNumber = parseFloat(previousNumber)
         previousNumber = previousNumber.toString()
         currentNumber = previousNumber
         botValue.textContent = currentNumber
@@ -112,7 +113,8 @@ function operate(){
             previousNumber /= currentNumber
             break;
     }
-    previousNumber = Number(previousNumber).toFixed(3)
+    previousNumber = previousNumber.toFixed(3)
+    previousNumber = parseFloat(previousNumber)
     previousNumber = previousNumber.toString()
     botValue.textContent = previousNumber
     topValue.textContent = "";
