@@ -53,6 +53,7 @@ equals.addEventListener('click', ()=>{
                 previousNumber /= currentNumber
                 break;
         }
+        previousNumber = Number(previousNumber).toFixed(3)
         previousNumber = previousNumber.toString()
         currentNumber = previousNumber
         botValue.textContent = currentNumber
@@ -64,8 +65,10 @@ equals.addEventListener('click', ()=>{
 
 for (let i=0; i<numbers.length; i++) {
     numbers[i].addEventListener('click', ()=>{
-        currentNumber += numbers[i].id
-        botValue.textContent = currentNumber
+        if(currentNumber.length < 11){
+            currentNumber += numbers[i].id
+            botValue.textContent = currentNumber
+        }
     })
 }
     
@@ -105,12 +108,11 @@ function operate(){
             if (currentNumber == 0){
                 currentNumber = "";
                 return botValue.textContent ="ERROR"
-                
             }
             previousNumber /= currentNumber
             break;
     }
-    
+    previousNumber = Number(previousNumber).toFixed(3)
     previousNumber = previousNumber.toString()
     botValue.textContent = previousNumber
     topValue.textContent = "";
