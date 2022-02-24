@@ -2,6 +2,8 @@ const topValue = document.querySelector('.display-value-two');
 const botValue = document.querySelector('.display-value');
 const clearBtn = document.querySelector('.clear');
 const deleteBtn = document.querySelector('.delete');
+
+//buttons for numbers and operators and others
 const nine = document.getElementById('9');
 const eight = document.getElementById('8');
 const seven = document.getElementById('7');
@@ -17,8 +19,8 @@ const minus = document.getElementById('-');
 const times = document.getElementById('*');
 const divide = document.getElementById('÷');
 const equals = document.getElementById('=');
-
 const decimal  = document.getElementById('.');
+
 const numbers = [nine, eight, seven, six, five, four, three, two, one, zero];
 const operators = [plus, minus, times, divide];
 let currentNumber = "";
@@ -31,37 +33,14 @@ deleteBtn.addEventListener('click', deletePrevious)
 
 equals.addEventListener('click', ()=>{
     if (currentNumber !== "" && previousNumber !== ""){
-        previousNumber = Number(previousNumber);
-        currentNumber = Number(currentNumber);
-    
-        switch(currentOperator){
-            case "+":
-                previousNumber += currentNumber
-                break;
-            case "-":
-                previousNumber -= currentNumber
-                break;
-            case "*":
-                previousNumber *= currentNumber
-                break;
-            case "÷":
-                if (currentNumber == 0){
-                    currentNumber = "";
-                    return botValue.textContent ="ERROR"
-                    
-                }
-                previousNumber /= currentNumber
-                break;
-        }
-        previousNumber = previousNumber.toFixed(3)
-        previousNumber = parseFloat(previousNumber)
-        previousNumber = previousNumber.toString()
-        currentNumber = previousNumber
-        botValue.textContent = currentNumber
-        topValue.textContent = ""
-        previousNumber = ""      
-    } 
-
+        operate()
+        if (botValue.textContent !== 'ERROR') {
+            currentNumber = previousNumber
+            botValue.textContent = currentNumber
+            topValue.textContent = ""
+            previousNumber = ""
+        }  
+    }  
 })
 
 for (let i=0; i<numbers.length; i++) {
@@ -77,6 +56,11 @@ for (let i=0; i<operators.length; i++) {
     operators[i].addEventListener('click',() => {
         if (currentNumber !== "" && previousNumber !== ""){
             operate()
+            if (botValue.textContent !== 'ERROR') {
+                botValue.textContent = previousNumber
+                topValue.textContent = "";
+                currentNumber = ""
+            }
             currentOperator = operators[i].id;
             topValue.textContent = previousNumber + " " + operators[i].id;
         } else if (currentNumber !== ""){
@@ -94,7 +78,6 @@ for (let i=0; i<operators.length; i++) {
 function operate(){
     previousNumber = Number(previousNumber);
     currentNumber = Number(currentNumber);
-
     switch(currentOperator){
         case "+":
             previousNumber += currentNumber
@@ -106,7 +89,7 @@ function operate(){
             previousNumber *= currentNumber
             break;
         case "÷":
-            if (currentNumber == 0){
+            if (currentNumber === 0){
                 currentNumber = "";
                 return botValue.textContent ="ERROR"
             }
@@ -116,9 +99,6 @@ function operate(){
     previousNumber = previousNumber.toFixed(3)
     previousNumber = parseFloat(previousNumber)
     previousNumber = previousNumber.toString()
-    botValue.textContent = previousNumber
-    topValue.textContent = "";
-    currentNumber = ""
 };
 
 function clear(){
