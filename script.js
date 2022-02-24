@@ -1,5 +1,7 @@
 const topValue = document.querySelector('.display-value-two'); 
 const botValue = document.querySelector('.display-value');
+const clearBtn = document.querySelector('.clear');
+const deleteBtn = document.querySelector('.delete');
 const nine = document.getElementById('9');
 const eight = document.getElementById('8');
 const seven = document.getElementById('7');
@@ -16,72 +18,127 @@ const times = document.getElementById('*');
 const divide = document.getElementById('÷');
 const equals = document.getElementById('=');
 
+const decimal  = document.getElementById('.');
 const numbers = [nine, eight, seven, six, five, four, three, two, one, zero];
 const operators = [plus, minus, times, divide];
-let chosenNumbers = [];
-let chosenNumbers2=[];
-let toCalculate = [];
-let calculate = [];
-let answer;
+let currentNumber = "";
+let previousNumber = "";
+let currentOperator = "";
 
-changeDisplayValue(numbers, operators)
-operate()
+decimal.addEventListener('click', addDecimal);
+clearBtn.addEventListener('click', clear);
+deleteBtn.addEventListener('click', deletePrevious)
 
-function changeDisplayValue(numbers, operators){
-    for (let i=0; i<numbers.length; i++) {
-        numbers[i].addEventListener('click',() => {
-            chosenNumbers += numbers[i].id
-            botValue.textContent = chosenNumbers;  
-        });
-    } 
+equals.addEventListener('click', ()=>{
+    if (currentNumber !== "" && previousNumber !== ""){
+        previousNumber = Number(previousNumber);
+        currentNumber = Number(currentNumber);
     
-    for (let i=0; i<operators.length; i++)
-    operators[i].addEventListener('click',() => {
-            toCalculate.push(chosenNumbers);
-            chosenNumbers = []
-        calculate.push(operators[i].id);
-        chosenNumbers2=toCalculate[0] + operators[i].id
-        topValue.textContent=chosenNumbers2;
+        switch(currentOperator){
+            case "+":
+                previousNumber += currentNumber
+                break;
+            case "-":
+                previousNumber -= currentNumber
+                break;
+            case "*":
+                previousNumber *= currentNumber
+                break;
+            case "÷":
+                if (currentNumber == 0){
+                    currentNumber = "";
+                    return botValue.textContent ="ERROR"
+                    
+                }
+                previousNumber /= currentNumber
+                break;
+        }
+        previousNumber = previousNumber.toString()
+        currentNumber = previousNumber
+        botValue.textContent = currentNumber
+        topValue.textContent = ""
+        previousNumber = ""      
+    } 
 
+})
+
+for (let i=0; i<numbers.length; i++) {
+    numbers[i].addEventListener('click', ()=>{
+        currentNumber += numbers[i].id
+        botValue.textContent = currentNumber
+    })
+}
+    
+for (let i=0; i<operators.length; i++) {
+    operators[i].addEventListener('click',() => {
+        if (currentNumber !== "" && previousNumber !== ""){
+            operate()
+            currentOperator = operators[i].id;
+            topValue.textContent = previousNumber + " " + operators[i].id;
+        } else if (currentNumber !== ""){
+            currentOperator = operators[i].id
+            previousNumber = currentNumber
+            topValue.textContent=previousNumber + " " + operators[i].id;
+            currentNumber = "";
+        } else {
+            currentOperator = operators[i].id
+            topValue.textContent=previousNumber + " " + operators[i].id;
+        }
     });
 }
 
 function operate(){
-    for (let i=0; i<operators.length; i++)
-    operators[i].addEventListener('click',() => {
+    previousNumber = Number(previousNumber);
+    currentNumber = Number(currentNumber);
+
+    switch(currentOperator){
+        case "+":
+            previousNumber += currentNumber
+            break;
+        case "-":
+            previousNumber -= currentNumber
+            break;
+        case "*":
+            previousNumber *= currentNumber
+            break;
+        case "÷":
+            if (currentNumber == 0){
+                currentNumber = "";
+                return botValue.textContent ="ERROR"
+                
+            }
+            previousNumber /= currentNumber
+            break;
+    }
     
-        if (toCalculate.length == 2){
-            switch(calculate[0]){
-                case "+":
-                   answer = add(Number(toCalculate[0]),Number(toCalculate[1]))
-                   toCalculate = []
-                   toCalculate[0] = answer;
-                   calculate.splice(0,1)
-                    break;
-                case "-":
-                   answer = subtract(toCalculate[0], toCalculate[1])
-                   toCalculate = []
-                   toCalculate[0] = answer;
-                   calculate.splice(0,1)
-                    break;
-                case "*":
-                    answer = multiply(toCalculate[0], toCalculate[1])
-                    toCalculate = []
-                    toCalculate[0] = answer;
-                    calculate.splice(0,1)
-                    break;
-                case "÷":
-                    answer = division(toCalculate[0], toCalculate[1])
-                    toCalculate = []
-                    toCalculate[0] = answer;
-                    calculate.splice(0,1)
-                    break;
-        }
-        botValue.textContent = answer
-        topValue.textContent = answer + operators[i].id
-        }
-    });
+    previousNumber = previousNumber.toString()
+    botValue.textContent = previousNumber
+    topValue.textContent = "";
+    currentNumber = ""
 };
+
+function clear(){
+    previousNumber = "";
+    currentNumber = "";
+    currentOperator = "";
+    topValue.textContent = "";
+    botValue.textContent = "";
+}
+
+function deletePrevious(){
+    if (currentNumber.length > 0) {
+        currentNumber = currentNumber.substring(0, currentNumber.length -1)
+        botValue.textContent = currentNumber
+        console.log(currentNumber)
+    }
+}
+
+function addDecimal(){
+    if(currentNumber.length>0 && currentNumber.includes('.') == false){
+        currentNumber += decimal.id
+        botValue.textContent = currentNumber;
+    }
+}
 
 function add(a,b){
     return a+b
