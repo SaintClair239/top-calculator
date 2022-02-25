@@ -78,6 +78,14 @@ body {
     color: white;
 }
 
+.num:hover {
+    background-color: #1a202e;
+}
+
+.operators:hover, .clear:hover, .delete:hover {
+    background-color: #54bed1;
+}
+
 .num-wrapper {
     display: flex;
     justify-content: space-between;
